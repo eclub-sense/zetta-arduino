@@ -64,11 +64,65 @@ void sendRandomPackets(){
   Serial.print("AT+REQUEST START,");
   Serial.println(count);
   for(int i=0;i<SENSOR_COUNT;i++){
-    if(tmp[i]){
-      Serial.print("senzor ");
-      Serial.println(i); 
-    } 
+    if(tmp[i])sendPacket(i); 
   }
   
   Serial.println("AT+REQUEST END");
 }
+
+void sendPacket(int i){
+  
+
+  byte packetBytes[32];
+
+  //UUID (4)
+  packetBytes[0]=0;
+  packetBytes[1]=0;
+  packetBytes[2]=0;
+  packetBytes[3]=i;
+
+
+  //SHOULD BE ENCRYPTED BY XOR
+  //INCR (1)
+  packetBytes[4]=0;
+
+  //TYPE (1)
+  packetBytes[5]=0x41;
+
+  //BATTERY (1)
+  packetBytes[6]=0xFF;
+
+  //RESERVED (3)
+  packetBytes[7]=0;
+  packetBytes[8]=0;
+  packetBytes[9]=0;
+
+  //PAYLOAD (21)
+  
+  //first byte data
+  packetBytes[10]=random(256);
+  //second byte data
+  packetBytes[11]=random(256);
+  
+  //rest is blank
+  for(int j=0;j<20;j++){
+    packetBytes[12+j]=0;
+  }
+
+  //CRC (1) - in payload temporarily
+  //0-30
+
+  
+  for(int j=0;j<32;j++){
+    if(packetBytes[j] < 16)Serial.print("0");
+    Serial.print(packetBytes[j], HEX);
+  }
+  Serial.println();
+
+  
+}
+
+
+
+
+
