@@ -10,7 +10,7 @@ odeslat
 00000002:41:1234567890123
 00000003:41:1234567890123
 */
-#define SENSOR_COUNT 3
+#define SENSOR_COUNT 10
 
 
 String command = "";  
@@ -18,7 +18,7 @@ byte command_termination = 0;
 byte previous=0;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(19200);
   command.reserve(200);
 
 }
@@ -88,6 +88,10 @@ void sendPacket(int i){
 
   //TYPE (1)
   packetBytes[5]=0x41;
+  if(i>7){
+    packetBytes[5]=0x42;
+  }
+
 
   //BATTERY (1)
   packetBytes[6]=0xFF;
@@ -103,6 +107,9 @@ void sendPacket(int i){
   packetBytes[10]=random(256);
   //second byte data
   packetBytes[11]=random(256);
+  if(i>7){
+    packetBytes[11]=0;
+  }
   
   //rest is blank
   for(int j=0;j<20;j++){
